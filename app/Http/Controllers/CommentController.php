@@ -22,4 +22,14 @@ class CommentController extends Controller
       'content' => 'required|string',
     ];
   }
+  public function store(Request $request)
+    {
+        $comment = new Comment;
+        $comment->body = $request->get('content');
+        $comment->user()->associate($request->user());
+        $post = Post::find($request->get('post/id'));
+        $post->comments()->save($comment);
+
+        return back();
+    }
 }

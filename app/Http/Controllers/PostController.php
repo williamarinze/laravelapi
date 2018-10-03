@@ -21,7 +21,8 @@ class PostController extends Controller
   public function validationRules(array $data, $id = null) {
     return [
       'title' => 'required|string',
-      'body' => 'required|string'
+      'body' => 'required|string',
     ];
   }
+   
 }

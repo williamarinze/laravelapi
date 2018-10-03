@@ -20,8 +20,8 @@ class UserController extends Controller
   protected function validationRules(array $data, $id = null) {
     return [
       'name' => 'required|string|max:50',
-      'email' => 'sometimes|email',
-      'password' => 'required|password'
+      'email' => 'required|email|unique:users,email',
+      'password' => 'required|min:6'
     ];
   }
 }
