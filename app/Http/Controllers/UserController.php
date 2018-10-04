@@ -24,4 +24,5 @@ class UserController extends Controller
       'password' => 'required|min:6'
     ];
   }
+  
 }

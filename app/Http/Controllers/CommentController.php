@@ -1,12 +1,10 @@
-<?php
+3<?php
 
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
-
+use Illuminate\Database\Eloquent\Model;
 use Laraquick\Controllers\Traits\Api;
-
 use App\Comment;
 
 class CommentController extends Controller
@@ -17,19 +15,18 @@ class CommentController extends Controller
     return Comment::class;
   }
 
+
   public function validationRules(array $data, $id = null) {
     return [
       'content' => 'required|string',
+      'post_id'=> 'required|integer|exists:posts,id',
+       
     ];
   }
-  public function store(Request $request)
-    {
-        $comment = new Comment;
-        $comment->body = $request->get('content');
-        $comment->user()->associate($request->user());
-        $post = Post::find($request->get('post/id'));
-        $post->comments()->save($comment);
 
-        return back();
-    }
+  public function beforeStoreResponse(Model &$data)
+  {
+    $data->user()->associate(request()->user());
+
+  }
 }

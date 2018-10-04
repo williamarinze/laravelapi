@@ -20,9 +20,14 @@ class PostController extends Controller
 
   public function validationRules(array $data, $id = null) {
     return [
+      'user_id'=>'required|integer',
       'title' => 'required|string',
       'body' => 'required|string',
     ];
   }
-   
+   public function beforeStoreResponse(Model &$data)
+  {
+    $data->user()->associate(request()->user());
+
+  }
 }
