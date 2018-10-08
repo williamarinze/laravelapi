@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 
+
 class RegisterController extends Controller
 {
     /*
@@ -20,7 +21,7 @@ class RegisterController extends Controller
     | provide this functionality without requiring any additional code.
     |
     */
-
+ 
     use RegistersUsers;
 
     /**
@@ -74,5 +75,32 @@ protected function registered(Request $request, $user)
     $user->generateToken();
 
     return response()->json(['data' => $user->toArray()], 201);
+
 }
+
+
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @override
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+public function register(Request $request)
+    {
+        $errors = $this->validator($request->all())->errors();
+
+        if(count($errors))
+        {
+            return response(['errors' => $errors], 401);
+        }
+
+        event(new Registered($user = $this->create($request->all())));
+
+        $this->guard()->login($user);
+
+        return response(['user' => $user]);
+    }
+
 }

@@ -1,4 +1,4 @@
-3<?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -20,11 +20,12 @@ class CommentController extends Controller
     return [
       'content' => 'required|string',
       'post_id'=> 'required|integer|exists:posts,id',
-       
+      'user_id'=>'required|integer|exists:users,id',
+
     ];
   }
 
-  public function beforeStoreResponse(Model &$data)
+ public function beforeStoreResponse(Model &$data)
   {
     $data->user()->associate(request()->user());
 

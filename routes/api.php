@@ -13,26 +13,27 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// protected routes
+Route::group(['middleware' => ['api', 'auth']], function () {
+  Route::group(['prefix' => 'auth'], function (){
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('me', 'AuthController@me');
+    Route::post('changepassword','ChangePasswordController@changePassword');
+  });
+
+   Route::resource('users','UserController');
+   Route::resource('posts','PostController', ['except' => ['index', 'show']]);
+   Route::resource('comments', 'CommentController', ['except' => 'index']);
 });
-// Auth
-               Route::group(['middleware' => 'auth:api'], function() {
 
-                  Route::post('register', 'Auth\RegisterController@register');
-                  Route::post('forgotpassword', 'Auth\ForgotPasswordController@forgotpassword');
 
-                  Route::post('verification', 'Auth\VerificationController@verification');
+// public routes
+Route::group(['middleware' => 'api'], function ($router) {
+  Route::post('auth/login', 'AuthController@login');
+  Route::post('register', 'UserController@store');
 
-                  Route::post('login', 'Auth\LoginController@login');
-                  Route::post('logout', 'Auth\LoginController@logout');
-                  Route::post('resetpassword', 'Auth\LoginController@reset');
-                                               
-                                                });
-
-//posts
-       Route::resource('posts','PostController');
-//comments       
-       Route::resource('comments','CommentController');
-//users       
-       Route::resource('users','UserController');
+  Route::get('posts', 'PostController@index');
+  Route::get('posts/{id}', 'PostController@show');
+  Route::get('users/{id}/posts', 'UserController@posts');
+});

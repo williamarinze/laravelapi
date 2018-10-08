@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
+
 
 use Laraquick\Controllers\Traits\Api;
 
@@ -18,16 +20,24 @@ class PostController extends Controller
     return Post::class;
   }
 
+  public function showModel()
+  {
+    return Post::with('comments');
+  }
+
   public function validationRules(array $data, $id = null) {
     return [
-      'user_id'=>'required|integer',
       'title' => 'required|string',
       'body' => 'required|string',
+
+
     ];
   }
-   public function beforeStoreResponse(Model &$data)
-  {
-    $data->user()->associate(request()->user());
 
+  protected function beforeStore(array &$data)
+  {
+    $data['user_id'] = Auth::user($data['user_id']);
+    
   }
 }
+
